@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="description" content="Run python code inside files" />
+	<meta name="keywords" content="pyp,python,preprocessor,c" />
+	<meta name="author" content="nutbread" />
+	<title>Python Preprocessor</title>
+	<link rel="shortcut icon" href="favicon.png" />
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+
+<div class="header_bar">
+	<div class="main main_no_overflow header">
+
+		<table class="header_table"><tbody>
+			<tr>
+				<td class="header_table_cell">
+					<div class="header_table_name">
+						<a class="header_table_name_user link_external link_author light_underline" href="https://nutbread.github.io/"><span>nutbread</span></a><span class="header_table_name_separator">/</span><a href="" class="header_table_name_title link_external link_title light_underline"><span>pyp</span></a>
+					</div>
+				</td>
+				<td class="header_table_cell">
+					<div class="header_table_separator"></div>
+				</td>
+				<td class="header_table_cell header_table_cell_full">
+					<div class="header_table_description">
+						<div class="header_table_description_name">Python preprocessor</div>
+						<div class="header_table_description_body">Run python code inside files</div>
+					</div>
+				</td>
+				<td class="header_table_cell">
+					<a class="header_table_view_on_github link_external link_view_on_github light_nohover_color_hover" href="https://github.com/nutbread/pyp">
+						<div class="header_table_view_on_github_line1">view on</div>
+						<div class="header_table_view_on_github_line2">github</div>
+					</a>
+				</td>
+			</tr>
+		</tbody></table>
+
+	</div>
+</div>
+<div class="main body">
+
+	<h1 id="about"><span class="hardlink_text">About<a class="hardlink" href="#about"></a></span></h1>
+	<p>
+		The pyp application functions similar to how <a class="link_external light_underline" href="https://php.net/" target="_blank"><span>PHP</span></a> functions, except it uses python and is designed for stand-alone file processing.
+	</p>
+	<p>
+		Arbitrary python code can be placed in <code>&lt;? python_code; ?&gt;</code> tags, and then running <code>pyp input.txt output.txt</code> will process the input file into a new output file.
+	</p>
+
+	<h4 id="required.software"><span class="hardlink_text">Required software<a class="hardlink" href="#required.software"></a></span></h4>
+	<p>
+		<ul>
+			<li><a class="link_external light_underline" href="https://www.python.org/download" target="_blank"><span>python</span></a> &ndash; currently built for 2.7 and 3.4; both x86 and x64</li>
+		</ul>
+	</p>
+
+	<h4 id="downloads"><span class="hardlink_text">Downloads<a class="hardlink" href="#downloads"></a></span></h4>
+	<p>
+		Current downloads are for Windows, and work on Windows 7 x86/x64.<br />
+		<span class="light">Note: rename the file you download to <code>pyp.exe</code> for ease of use.</span>
+	</p>
+	<p>
+		<ul>
+			<li>
+				For python 2.7: <a class="link_codebase_raw light_underline" href="https://raw.githubusercontent.com/nutbread/pyp/master/bin/pyp-py2-release-vc9-x86.exe" target="_blank" download="pyp.exe"><span>x86</span></a> | <a class="link_codebase_raw light_underline" href="https://raw.githubusercontent.com/nutbread/pyp/master/bin/pyp-py2-release-vc9-x64.exe" target="_blank" download="pyp.exe"><span>x64</span></a> &ndash;
+				compiled using python 2.7.8, Visual Studio 2008
+			</li>
+			<li>
+				For python 3.4: <a class="link_codebase_raw light_underline" href="https://raw.githubusercontent.com/nutbread/pyp/master/bin/pyp-py3-release-vc10-x86.exe" target="_blank" download="pyp.exe"><span>x86</span></a> | <a class="link_codebase_raw light_underline" href="https://raw.githubusercontent.com/nutbread/pyp/master/bin/pyp-py3-release-vc10-x64.exe" target="_blank" download="pyp.exe"><span>x64</span></a> &ndash;
+				compiled using python 3.4.1, Visual Studio 2010
+			</li>
+		</ul>
+	</p>
+	<p>
+		For extra build versions, check out <a class="link_codebase light_underline" href="https://github.com/nutbread/pyp/tree/master/bin" target="_blank"><span>the bin directory</span></a>
+	</p>
+
+	<h1 id="tag.syntax"><span class="hardlink_text">Tag syntax<a class="hardlink" href="#tag.syntax"></a></span></h1>
+	<p>
+		There are two forms of tags that can be used: <strong>execution tags</strong> and <strong>evaluation tags</strong>.
+	</p>
+	<p>
+		<ul>
+			<li>
+				<strong>execution tags</strong><br />
+				These tags execute a block of code; the code is written as any python script would be written.<br />
+				Code appears in <code>&lt;? ?&gt;</code> tags.
+			</li>
+			<li>
+				<strong>evaluation tags</strong><br />
+				These tags evaluate an expression and output the result if it's a string. The code is written like an <a class="link_external light_underline" href="https://docs.python.org/2/library/functions.html#eval" target="_blank"><span>eval expression</span></a> in python.<br />
+				Code appears in <code>&lt;?= ?&gt;</code> tags.
+			</li>
+		</ul>
+	</p>
+
+	<h4 id="tag.continuations"><span class="hardlink_text">Tag continuations<a class="hardlink" href="#tag.continuations"></a></span></h4>
+	<p>
+		Tag continuations are used to turn text content outside of tag blocks into a string to be used in an expression. They can be used with both <strong>execution tags</strong> and <strong>evaluation tags</strong>.
+	</p>
+	<p>
+		Tag continuations are formed by adding an ellipsis <code>...</code> to the starting/ending tags surrounding the content to be stringified. For example, the following are identical:
+	</p>
+	<p>
+		<code>&lt;? use_code( ...?&gt;convert this to a string&lt;?... ); ?&gt;</code><br />
+		<code>&lt;? use_code("convert this to a string"); ?&gt;</code>
+	</p>
+	<p>
+		There can also be nested tags, albeit not usually necessary:
+	</p>
+	<p>
+		<code>&lt;? use_code( ...?&gt;convert &lt;?="this"?&gt; to a string&lt;?... ); ?&gt;</code><br />
+		<code>&lt;? use_code( ...?&gt;convert this to a string&lt;?... ); ?&gt;</code><br />
+		<code>&lt;? use_code("convert this to a string"); ?&gt;</code>
+	</p>
+	<p>
+		Invalid, mismatched, or differing type tag continuations will all result in an error.
+	</p>
+
+	<h4 id="pyp.module"><span class="hardlink_text">pyp module<a class="hardlink" href="#pyp.module"></a></span></h4>
+	<p>
+		For code evaluation, a python variable called <code>pyp</code> is added into the global scope. It represents a module which has two functions: <code>write</code> and <code>include</code>.
+	</p>
+	<p>
+		<ul>
+			<li>
+				<code>pyp.<strong>write</strong>(content) <span class="light">: None</span></code><br />
+				Write a string to the internal output buffer. This should be used in place of any <code>print</code> or <code>sys.stdout.write</code> statements, as they still direct to the default stdout.<br />
+				<code><a class="link_external light_underline" href="https://docs.python.org/2/library/exceptions.html#exceptions.TypeError" target="_blank"><span>TypeError</span></a></code> is thrown if an invalid value is passed.
+			</li>
+			<li>
+				<code>pyp.<strong>include</strong>(filename) <span class="light">: None</span></code><br />
+				Includes another pyp formatted file into the current file. It may be beneficial to use the <code><a class="link_external light_underline" href="https://docs.python.org/2/reference/simple_stmts.html#import" target="_blank"><span>import</span></a></code> statement instead.<br />
+				Several unlikely exceptions can be thrown (given in python2/python3 forms):<br />
+				<code><a class="link_external light_underline" href="https://docs.python.org/2/library/exceptions.html#exceptions.TypeError" target="_blank"><span>TypeError</span></a></code> / <code><a class="link_external light_underline" href="https://docs.python.org/3.4/library/exceptions.html#TypeError" target="_blank"><span>TypeError</span></a></code> : an invalid value was passed<br />
+				<code><a class="link_external light_underline" href="https://docs.python.org/2/library/exceptions.html#exceptions.MemoryError" target="_blank"><span>MemoryError</span></a></code> / <code><a class="link_external light_underline" href="https://docs.python.org/3.4/library/exceptions.html#MemoryError" target="_blank"><span>MemoryError</span></a></code> : ran out of memory<br />
+				<code><a class="link_external light_underline" href="https://docs.python.org/2/library/exceptions.html#exceptions.IOError" target="_blank"><span>IOError</span></a></code> / <code><a class="link_external light_underline" href="https://docs.python.org/3.4/library/exceptions.html#PermissionError" target="_blank"><span>PermissionError</span></a></code> : input read or output write error<br />
+				<code><a class="link_external light_underline" href="https://docs.python.org/2/library/exceptions.html#exceptions.IOError" target="_blank"><span>IOError</span></a></code> / <code><a class="link_external light_underline" href="https://docs.python.org/3.4/library/exceptions.html#FileNotFoundError" target="_blank"><span>FileNotFoundError</span></a></code> : specified filename was not found<br />
+			</li>
+		</ul>
+	</p>
+
+	<h1 id="command.line"><span class="hardlink_text">Command line<a class="hardlink" href="#command.line"></a></span></h1>
+	<p>
+		The pyp command line is simple and provides a few customization options. The basic style of the command line can be one of the following:
+	</p>
+	<p>
+		<div class="codeblock"><div class="codeblock_inner">
+		pyp <span class="colored">&lt;args&gt;</span> INPUT.txt OUTPUT.txt<br />
+		pyp <span class="colored">&lt;args&gt;</span> -iINPUT.txt -oOUTPUT.txt<br />
+		pyp <span class="colored">&lt;args&gt;</span> -i INPUT.txt -o OUTPUT.txt<br />
+		pyp <span class="colored">&lt;args&gt;</span> --input INPUT.txt --output OUTPUT.txt
+		</div></div>
+	</p>
+
+	<h4 id="command.line.arguments"><span class="hardlink_text">Command line arguments<a class="hardlink" href="#command.line.arguments"></a></span></h4>
+	<p>
+		Additional info can be obtained by executing <code>pyp --usage</code>.
+	</p>
+	<p>
+		<ul>
+			<li>
+				<code><strong>--input</strong> &lt;path&gt;</code> &ndash; Specify the input filename<br />
+				If <code>path</code> is "<code>-</code>", stdin is used.
+			</li>
+			<li>
+				<code><strong>--output</strong> &lt;path&gt;</code> &ndash; Specify the output filename<br />
+				If <code>path</code> is "<code>-</code>", stdout is used.
+			</li>
+			<li>
+				<code><strong>--read-block-size</strong> &lt;size&gt;</code> &ndash; The size (in characters) of a file read block; default is 10240
+			</li>
+			<li>
+				<code><strong>--read-block-count</strong> &lt;count&gt;</code> &ndash; The initial number of read blocks to cycle between; default is 2<br />
+				This is used for state rollback, in case the previous state is no longer in the current active read block
+			</li>
+			<li>
+				<code><strong>--no-continuations</strong></code> &ndash; Disables tag continuations
+			</li>
+			<li>
+				<code><strong>--inline-errors</strong></code> &ndash; Inlines errors into the output file instead of <code>stderr</code>
+			</li>
+			<li>
+				<code><strong>--inline-error-modifer</strong> &lt;method&gt;</code> &ndash; Method of modifying error messages when they are inlined<br />
+				For example, if inlined into a HTML file, you may want special characters to be replaced. (example: "<code>&lt;</code>" to "<code>&amp;lt;</code>")<br />
+				Available values are "<code>html</code>" and "<code>none</code>".
+			</li>
+			<li>
+				<code><strong>--encoding</strong> &lt;mode&gt;</code> &ndash; Method of encoding unicode values into byte values<br />
+				Available values can be found <a class="link_external light_underline" href="https://docs.python.org/2/library/codecs.html#standard-encodings" target="_blank"><span>here</span></a>; default is "<code>utf-8</code>"
+			</li>
+			<li>
+				<code><strong>--encoding-errors</strong> &lt;mode&gt;</code> &ndash; Method dealing with encoding errors<br />
+				Available values can be found <a class="link_external light_underline" href="https://docs.python.org/2/library/codecs.html#codec-base-classes" target="_blank"><span>here</span></a>; default is "<code>strict</code>"
+			</li>
+		</ul>
+	</p>
+
+
+
+</div>
+
+
+</body>
+</html>
+
