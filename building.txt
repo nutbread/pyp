@@ -1,0 +1,11 @@
+Building is currently set up to work in Windows using GCC and Visual Studio 2008/2010
+
+Running "build.py" will build object files and the executable.
+Target settings are specified on the command line; see "build.all.bat" for all combinations.
+Additionally, "run" can be specified to run it after compilation.
+
+"settings.py" contains the directories specific files are located in.
+Modify the directory values inside of it to the directories on your system.
+
+Additionally, when compiling with Visual Studio 2008, the files from "other\inttypes.zip"
+must be be extracted into an included directory. (e.g. "...\Microsoft Visual Studio 9.0\VC\include")

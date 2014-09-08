@@ -1,0 +1,49 @@
+// http://msdn.microsoft.com/en-us/library/windows/desktop/aa381058(v=vs.85).aspx
+#include <Winver.h>
+#include "Resources.h"
+
+
+// Debug
+#ifndef NDEBUG
+#define FILEFLAGS_DEBUG VS_FF_DEBUG
+#else
+#define FILEFLAGS_DEBUG 0
+#endif
+
+
+// Icons
+RES_ICON_MAIN		ICON	"icon.ico"
+RES_ICON_WINDOW		ICON	"icon-16-32.ico"
+
+
+// Version info
+VS_VERSION_INFO	VERSIONINFO
+FILEVERSION		RES_FILE_VERSION
+PRODUCTVERSION	RES_PRODUCT_VERSION
+FILEFLAGSMASK	VS_FFI_FILEFLAGSMASK
+FILEFLAGS		FILEFLAGS_DEBUG
+FILEOS			VOS__WINDOWS32
+FILETYPE		VFT_APP // VFT_DLL
+FILESUBTYPE		VFT2_UNKNOWN
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904E4"
+		BEGIN
+			VALUE "CompanyName",		RES_COMPANY_NAME "\x00"
+			VALUE "FileDescription",	RES_DESCRIPTION "\x00"
+			VALUE "FileVersion",		RES_FILE_VERSION_STR "\x00"
+			VALUE "InternalName",		RES_INTERNAL_NAME "\x00"
+			VALUE "OriginalFilename",	RES_ORIGINAL_FILENAME "\x00"
+			VALUE "ProductName",		RES_PRODUCT_NAME "\x00"
+			VALUE "ProductVersion",		RES_PRODUCT_VERSION_STR "\x00"
+			VALUE "LegalCopyright",		RES_LEGAL_COPYRIGHT "\x00"
+			VALUE "Comments",			RES_COMMENTS "\x00"
+		END
+	END
+
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1200
+	END
+END
