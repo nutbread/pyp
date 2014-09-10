@@ -133,7 +133,7 @@ main(int argc, char** argv) {
 	#ifndef NDEBUG
 	memoryStats();
 	memoryCleanup();
-	printf("returnValue = %d;\n", returnValue);
+	fprintf(stderr, "returnValue = %d;\n", returnValue);
 	#endif
 
 	// Done
