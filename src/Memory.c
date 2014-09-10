@@ -376,7 +376,7 @@ memoryCustomFree_(void* ptr) {
 // Dump memory statistics
 void
 memoryStats() {
-	printf("Memory : [ malloc=%d , free=%d , unmatched=%d ]\n", (unsigned int) memAllocCount, (unsigned int) memFreeCount, (int) pypUnmatchedMallocs);
+	fprintf(stderr, "Memory : [ malloc=%d , free=%d , unmatched=%d ]\n", (unsigned int) memAllocCount, (unsigned int) memFreeCount, (int) pypUnmatchedMallocs);
 }
 
 // Clean up memory

@@ -7,6 +7,7 @@
 #include "PypTypes.h"
 
 
+
 enum {
 	PYP_READER_ERROR_ID_NO_ERROR = 0x0,
 	PYP_READER_ERROR_ID_UNCLOSED_TAG = 0x1,

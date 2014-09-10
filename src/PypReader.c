@@ -8,6 +8,16 @@
 
 
 
+#ifdef NDEBUG
+#define DEBUG_PRINT(format, ...)
+#define DEBUG_VAR(setup)
+#else
+#define DEBUG_PRINT(format, ...) fprintf(stderr, format, ##__VA_ARGS__)
+#define DEBUG_VAR(setup) setup
+#endif
+
+
+
 // Structs
 typedef struct PypReadBlock_ {
 	PypSize bufferSize;
@@ -761,6 +771,12 @@ pypReadPerformAction(PypReader* reader) {
 	// Assertions
 	assert(reader != NULL);
 	assert(reader->rollback.mostRecent.tag != NULL);
+	DEBUG_PRINT(
+		"  ACTION: %s; part=%s; pos=%d\n",
+		pypTagIsClosing(reader->rollback.mostRecent.tag) ? "closing" : "opening",
+		reader->rollback.mostRecent.tag->text,
+		*reader->ptrCurrentBlockPosition
+	);
 
 	// Setup vars
 	blockStart = reader->rollback.start.block;
@@ -931,6 +947,13 @@ pypReadRollback(PypReader* reader) {
 	// Assertions
 	assert(reader != NULL);
 	assert(reader->rollback.active);
+	DEBUG_PRINT(
+		"  ROLLBACK: block_change=%s; position=%d->%d; arbitrary_chars=%d;\n",
+		(*reader->ptrCurrentBlock == reader->rollback.mostRecent.block) ? "false" : "true",
+		*reader->ptrCurrentBlockPosition,
+		reader->rollback.mostRecent.blockPosition,
+		reader->rollback.mostRecent.arbitraryChars
+	);
 
 	// Rollback
 	*reader->ptrCurrentBlockPosition = reader->rollback.mostRecent.blockPosition;
@@ -1106,7 +1129,6 @@ pypReaderClean(PypReader* reader) {
 PypReadStatus
 pypReadFromStream(FILE* inputStream, FILE* outputStream, FILE* errorStream, PypDataBuffer* dataBuffer, const PypProcessingInfo* processingInfo, const PypTagGroup* group, const PypReaderSettings* settings, void* data) {
 	// Vars
-	int streamError = 0;
 	PypSize arbitraryChars = 0;
 	PypSize tagPos = 0;
 	PypSize i = 0;
@@ -1135,11 +1157,19 @@ pypReadFromStream(FILE* inputStream, FILE* outputStream, FILE* errorStream, PypD
 
 	// Read loop
 	while (PYP_TRUE) {
+		DEBUG_VAR(int readingNew = (currentBlock->previousSibling == lastReadBlock));
+
 		// Read block
 		if (currentBlock->previousSibling == lastReadBlock) {
 			currentBlock->readLength = fread(currentBlock->buffer, sizeof(PypChar), currentBlock->bufferSize, inputStream);
 			lastReadBlock = currentBlock;
 		}
+		DEBUG_PRINT(
+			"READ_LOOP: rollback=%s; mode=%s; length=%d;\n",
+			reader.rollback.active ? "active  " : "inactive",
+			readingNew ? "new" : "pre",
+			currentBlock->readLength
+		);
 
 
 
@@ -1246,7 +1276,7 @@ pypReadFromStream(FILE* inputStream, FILE* outputStream, FILE* errorStream, PypD
 
 
 		// Done?
-		if (feof(inputStream) || (streamError = ferror(inputStream)) != 0) {
+		if (currentBlock->readLength < currentBlock->bufferSize) {
 			// Rollback if necessary
 			if (reader.rollback.active) {
 				// Roll back
@@ -1265,6 +1295,7 @@ pypReadFromStream(FILE* inputStream, FILE* outputStream, FILE* errorStream, PypD
 		assert(currentBlock->nextSibling != NULL);
 		if (currentBlock->nextSibling == reader.rollback.start.block) {
 			// New buffer required
+			DEBUG_PRINT("Adding new read block\n");
 			if (!pypReadBlockExtendAfter(currentBlock, settings->readBlockSize)) {
 				// Error
 				reader.status = PYP_READ_ERROR_MEMORY;
