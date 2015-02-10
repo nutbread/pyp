@@ -773,7 +773,7 @@ pypReadPerformAction(PypReader* reader) {
 	assert(reader->rollback.mostRecent.tag != NULL);
 	DEBUG_PRINT(
 		"  ACTION: %s; part=%s; pos=%d\n",
-		pypTagIsClosing(reader->rollback.mostRecent.tag) ? "closing" : "opening",
+		pypTagIsClosing(reader->rollback.mostRecent.tag) ? "closing" : (reader->rollback.mostRecent.tag->children == NULL ? "complete" : "opening"),
 		reader->rollback.mostRecent.tag->text,
 		*reader->ptrCurrentBlockPosition
 	);
@@ -998,7 +998,7 @@ pypReadTagMatched(PypReader* reader, PypBool allowArbitraryChars) {
 
 	// Check if the tag has no chilren (i.e. it is complete match)
 	if (reader->tagStack.tail->tag->firstChild == NULL) {
-		if (reader->rollback.mostRecent.arbitraryChars > 0) {
+		if (allowArbitraryChars && reader->rollback.mostRecent.arbitraryChars > 0) {
 			// Arbitrary characters must be read in
 			*(reader->ptrArbitraryChars) = reader->rollback.mostRecent.arbitraryChars;
 		}
@@ -1007,14 +1007,16 @@ pypReadTagMatched(PypReader* reader, PypBool allowArbitraryChars) {
 			if (!pypReadPerformAction(reader)) return PYP_FALSE; // error
 		}
 	}
-	else if (!allowArbitraryChars) {
-		// This occured after an arbitrary character string; perform an action
-		if (!pypReadPerformAction(reader)) return PYP_FALSE; // error
-	}
 	else {
-		// Continue in case there's a longer match
-		reader->tagStack.tail->tagListFirst = reader->tagStack.tail->tag->firstChild;
-		reader->tagStack.tail->tag = NULL;
+		if (allowArbitraryChars) {
+			// Continue in case there's a longer match
+			reader->tagStack.tail->tagListFirst = reader->tagStack.tail->tag->firstChild;
+			reader->tagStack.tail->tag = NULL;
+		}
+		else {
+			// This occured after an arbitrary character string; perform an action
+			if (!pypReadPerformAction(reader)) return PYP_FALSE; // error
+		}
 	}
 
 	// Okay
@@ -1238,7 +1240,8 @@ pypReadFromStream(FILE* inputStream, FILE* outputStream, FILE* errorStream, PypD
 						// Tag has been matched (so far)
 						if (!pypReadTagMatched(&reader, PYP_FALSE)) goto cleanup; // error
 
-						assert(reader.tagStack.tail->tag == NULL && arbitraryChars == 0);
+						assert(reader.tagStack.tail->tag == NULL);
+						assert(arbitraryChars == 0);
 					}
 				}
 				else if (reader.tagStack.tail->tag->text[tagPos] == c) {
