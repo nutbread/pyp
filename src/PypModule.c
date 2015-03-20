@@ -544,7 +544,7 @@ pypModulePythonSetup(const cmd_char* applicationPath) {
 	}
 	memcpy(state->applicationNameUnicode, applicationPath, sizeof(cmd_char) * (applicationPathLength + 1));
 
-	if (unicodeUTF8EncodeLength(applicationPath, applicationPathLength, &state->applicationName, &outputCharacterCount,&errorCount) != UNICODE_OKAY) {
+	if (unicodeUTF8EncodeLength(applicationPath, applicationPathLength, &state->applicationName, &outputCharacterCount, &errorCount) != UNICODE_OKAY) {
 		state->status = PYP_MODULE_SETUP_STATUS_ERROR_MEMORY;
 		return state; // error
 	}
@@ -1275,7 +1275,8 @@ PypReadStatus
 pypDataBufferModifyExecute(PypDataBuffer* input, PypDataBuffer** outputDataBuffer, const PypStreamLocation* streamLocation, void* data, PypBool expression) {
 	// Vars
 	const char* sourceBuffer;
-	size_t sourceBufferOffset;
+	PypSize sourceBufferOffset = 0;
+	PypSize sourceBufferLength;
 	PypDataBufferEntry* entryNew;
 	PyObject* code;
 	PypModuleExecutionInfo* executionInfo = (PypModuleExecutionInfo*) data;
@@ -1302,8 +1303,8 @@ pypDataBufferModifyExecute(PypDataBuffer* input, PypDataBuffer** outputDataBuffe
 	assert(sourceBuffer != NULL);
 
 	// Cut off leading whitespace
-	sourceBufferOffset = 0;
-	while (*sourceBuffer != '\x00' && pypCharIsWhitespaceNotNewline(*sourceBuffer)) {
+	sourceBufferLength = input->totalSize;
+	while (sourceBufferOffset < sourceBufferLength && pypCharIsWhitespaceNotNewline(*sourceBuffer)) {
 		++sourceBuffer;
 		++sourceBufferOffset;
 	}

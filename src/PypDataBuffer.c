@@ -80,18 +80,13 @@ pypDataBufferExtend(PypDataBuffer* dataBuffer, PypSize dataLength) {
 	if (entry == NULL) return NULL; // error
 
 	// Setup
-	#ifndef NDEBUG
-	++dataLength; // Debug only; null terminates without interfering with anything else
-	#endif
-	entry->buffer = memAllocArray(PypChar, dataLength);
+	entry->buffer = memAllocArray(PypChar, dataLength + 1);
 	if (entry->buffer == NULL) {
 		// Cleanup
 		memFree(entry);
 		return NULL;
 	}
-	#ifndef NDEBUG
-	entry->buffer[--dataLength] = '\x00'; // Debug only; null terminates without interfering with anything else
-	#endif
+	entry->buffer[dataLength] = '\x00'; // Null terminate; the function pypDataBufferUnify won't always create a new buffer (and thus won't null terminate)
 
 	entry->bufferLength = dataLength;
 	dataBuffer->totalSize += dataLength;
